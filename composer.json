@@ -1,0 +1,21 @@
+{
+    "name": "green-spot/tanuki-core",
+    "description": "Versatile Web Form Core Library",
+    "keywords": ["form", "headless"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "green spot",
+            "email": "in.green.spot@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "GreenSpot\\Tanuki\\": "src/includes/"
+        }
+    },
+    "require": {
+        "green-spot/formtagbinder": "^1.0"
+    }
+}
