@@ -13,10 +13,10 @@ class Tanuki {
     $this->fieldFactory = isset($config["fieldFactory"]) ? $config["fieldFactory"] : new Factory\FieldFactory();
     $this->validator = isset($config["validator"]) ? $config["validator"] : new Validator();
 
-    if(!isset($config["schema"])) {
-      throw new \InvalidArgumentException("'schema' is required in config");
+    if(!isset($config["schemaDir"])) {
+      throw new \InvalidArgumentException("'schemaDir' is required in config");
     }
-    $this->formSchemaProvider = new JsonFormSchemaProvider(rtrim($config["schema"], "/") . "/");
+    $this->formSchemaProvider = new JsonFormSchemaProvider(rtrim($config["schemaDir"], "/") . "/");
   }
 
   public function createForm(string $name): Form {

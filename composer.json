@@ -16,6 +16,5 @@
         }
     },
     "require": {
-        "green-spot/formtagbinder": "^1.0"
     }
 }

@@ -23,7 +23,11 @@ class Form {
   }
 
   public function bind(array $data){
-    $this->postData = $data;
+    $this->postData = [];
+
+    foreach($this->schema->fields as $field){
+      $this->postData[$field->name] = $data[$field->name] ?? null;
+    }
   }
 
   public function validate(){

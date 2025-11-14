@@ -4,7 +4,7 @@ namespace GreenSpot\Tanuki\PostHandler;
 
 use GreenSpot\Tanuki\PostHandlerInterface;
 
-class EmailPostHandler implements PostHandlerInterface {
+class TsvLogHandler implements PostHandlerInterface {
   public array $config = [];
 
   public function __construct(array $config = []) {
@@ -12,6 +12,9 @@ class EmailPostHandler implements PostHandlerInterface {
   }
 
   public function handle(array $formData): void {
-    // Implementation for handling form data and sending email
+    $path = rtrim($this->config['path'] ?? dirname($_SERVER['SCRIPT_FILENAME']), '/') . '/log.tsv';
+    $output = fopen($path, 'a');
+    fputcsv($output, $formData, "\t");
+    fclose($output);
   }
 }
