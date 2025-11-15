@@ -3,6 +3,7 @@
 namespace GreenSpot\Tanuki\PostHandler;
 
 use GreenSpot\Tanuki\PostHandlerInterface;
+use GreenSpot\Tanuki\PostHandlerResult;
 
 class TsvLogHandler implements PostHandlerInterface {
   public array $config = [];
@@ -11,10 +12,12 @@ class TsvLogHandler implements PostHandlerInterface {
     $this->config = $config;
   }
 
-  public function handle(array $formData): void {
+  public function handle(array $formData): PostHandlerResult {
     $path = rtrim($this->config['path'] ?? dirname($_SERVER['SCRIPT_FILENAME']), '/') . '/log.tsv';
     $output = fopen($path, 'a');
     fputcsv($output, $formData, "\t");
     fclose($output);
+
+    return new PostHandlerResult(true);
   }
 }

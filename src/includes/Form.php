@@ -6,7 +6,7 @@ class Form {
   public string $name;
   private FormSchema $schema;
   private Validator $validator;
-  private array $postHandlers;
+  private PostHandlerPipeline $postHandlers;
 
   public array $postData;
   public array $validationErrors = [];
@@ -19,7 +19,7 @@ class Form {
   }
 
   public function addPostHandler(PostHandlerInterface $postHandler){
-    $this->postHandlers[] = $postHandler;
+    $this->postHandlers->addHandler($postHandler);
   }
 
   public function bind(array $data){
@@ -49,9 +49,7 @@ class Form {
   }
 
   public function send(){
-    foreach($this->postHandlers as $handler){
-      $handler->handle($this->postData);
-    }
+    return $this->postHandlers->handle($this->postData);
   }
 
   private function addValidationError(string $field, string $vname){

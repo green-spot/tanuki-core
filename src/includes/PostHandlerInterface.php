@@ -3,5 +3,5 @@
 namespace GreenSpot\Tanuki;
 
 interface PostHandlerInterface {
-  public function handle(array $formData): void;
+  public function handle(array $formData): PostHandlerResult;
 }
