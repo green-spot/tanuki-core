@@ -2,22 +2,33 @@
 
 namespace GreenSpot\Tanuki\PostHandler;
 
-use GreenSpot\Tanuki\PostHandlerInterface;
-use GreenSpot\Tanuki\PostHandlerResult;
+use GreenSpot\Tanuki\AbstractHandler;
+use GreenSpot\Tanuki\Form;
+use GreenSpot\Tanuki\HandlerPipelineContext;
+use GreenSpot\Tanuki\HandlerResult;
 
-class TsvLogHandler implements PostHandlerInterface {
+class TsvLogHandler extends AbstractHandler {
   public array $config = [];
 
   public function __construct(array $config = []) {
     $this->config = $config;
   }
 
-  public function handle(array $formData): PostHandlerResult {
+  public function handle(Form $form, HandlerPipelineContext $context): HandlerResult {
     $path = rtrim($this->config['path'] ?? dirname($_SERVER['SCRIPT_FILENAME']), '/') . '/log.tsv';
+
+    if(file_exists($path) && (is_dir($path) || !is_writable($path))) {
+      return $this->failure("Log file is not writable: " . $path);
+    }
+
+    if(!file_exists($path) && !touch($path)) {
+      return $this->failure("Log file could not be created: " . $path);
+    }
+
     $output = fopen($path, 'a');
-    fputcsv($output, $formData, "\t");
+    fputcsv($output, $form->postData, "\t");
     fclose($output);
 
-    return new PostHandlerResult(true);
+    return $this->success();
   }
 }

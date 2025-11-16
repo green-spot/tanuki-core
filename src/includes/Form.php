@@ -6,19 +6,21 @@ class Form {
   public string $name;
   private FormSchema $schema;
   private Validator $validator;
-  private PostHandlerPipeline $postHandlers;
+  private HandlerPipeline $preHandlers;
+  private HandlerPipeline $postHandlers;
 
   public array $postData;
-  public array $validationErrors = [];
-  public array $handleErorrs = [];
+  private array $validationErrors = [];
 
   public function __construct(string $name, FormSchema $schema, Validator $validator) {
     $this->name = $name;
     $this->schema = $schema;
     $this->validator = $validator;
+    $this->preHandlers = new HandlerPipeline("pre");
+    $this->postHandlers = new HandlerPipeline("post");
   }
 
-  public function addPostHandler(PostHandlerInterface $postHandler){
+  public function addPostHandler(HandlerInterface $postHandler){
     $this->postHandlers->addHandler($postHandler);
   }
 
@@ -28,6 +30,14 @@ class Form {
     foreach($this->schema->fields as $field){
       $this->postData[$field->name] = $data[$field->name] ?? null;
     }
+  }
+
+  public function hasValidationErrors(): bool {
+    return !empty($this->validationErrors);
+  }
+
+  public function getValidationErrors(): array {
+    return $this->validationErrors;
   }
 
   public function validate(){
@@ -48,8 +58,20 @@ class Form {
     return $success;
   }
 
-  public function send(){
-    return $this->postHandlers->handle($this->postData);
+  public function send(): FormResult {
+    $sharedData = new SharedData();
+    $preContext = new HandlerPipelineContext($sharedData);
+    $postContext = new HandlerPipelineContext($sharedData);
+
+    $this->preHandlers->execute($this, $preContext);
+
+    if(!$preContext->hasError()){
+      if($this->validate()){
+        $this->postHandlers->execute($this, $postContext);
+      }
+    }
+
+    return FormResult::fromContextAndForm($preContext, $postContext, $this);
   }
 
   private function addValidationError(string $field, string $vname){

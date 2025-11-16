@@ -36,7 +36,7 @@ class Validator {
       return strlen($value) <= $max;
     });
 
-    $this->addValidator('matchesField', function(string|array $value, array $postData, array|true $args = []): bool {
+    $this->addValidator('matchField', function(string|array $value, array $postData, array|true $args = []): bool {
       if (is_array($value) || !isset($args[0]) || !isset($postData[$args[0]])) {
         return false;
       }
