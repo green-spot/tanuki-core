@@ -9,7 +9,7 @@ class Form {
   private HandlerPipeline $preHandlers;
   private HandlerPipeline $postHandlers;
 
-  public array $postData;
+  private array $postData;
   private array $validationErrors = [];
 
   public function __construct(string $name, FormSchema $schema, Validator $validator) {
@@ -30,6 +30,20 @@ class Form {
     foreach($this->schema->fields as $field){
       $this->postData[$field->name] = $data[$field->name] ?? null;
     }
+  }
+
+  public function getRawData(): array {
+    return $this->postData;
+  }
+
+  public function getNormalizedData(): array {
+    $postData = $this->postData;
+
+    return array_map(function($field) use($postData) {
+      $fieldName = $field->name;
+      $fieldValue = $postData[$fieldName] ?? null;
+      return $field->normalize($fieldValue);
+    }, $this->schema->fields);
   }
 
   public function hasValidationErrors(): bool {

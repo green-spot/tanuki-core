@@ -3,9 +3,9 @@
 namespace GreenSpot\Tanuki\Factory;
 
 use GreenSpot\Tanuki\Field\FieldInterface;
-use GreenSpot\Tanuki\Field\TextField;
-use GreenSpot\Tanuki\Field\EmailField;
-use GreenSpot\Tanuki\Field\TextAreaField;
+use GreenSpot\Tanuki\Field\ValueField;
+use GreenSpot\Tanuki\Field\ArrayField;
+use GreenSpot\Tanuki\Field\FileField;
 
 class FieldFactory
 {
@@ -13,13 +13,13 @@ class FieldFactory
   private array $typeMap = [];
 
   public function __construct() {
-    $this->registerField('text', TextField::class);
-    $this->registerField('email', EmailField::class);
-    $this->registerField('textarea', TextAreaField::class);
+    $this->registerField('value', ValueField::class);
+    $this->registerField('array', ArrayField::class);
+    $this->registerField('file', FileField::class);
   }
 
   /**
-   * * @param string $type フィールドタイプ識別子 (例: 'image')
+   * * @param string $type フィールドタイプ識別子 (例: 'value')
    * @param string $className FieldInterfaceを実装したクラス名
    */
   public function registerField(string $type, string $className): void{
@@ -30,7 +30,7 @@ class FieldFactory
   }
 
   public function create(array $fieldData): FieldInterface {
-    $type = $fieldData['type'] ?? null;
+    $type = $fieldData['type'] ?? 'value';
 
     if (!isset($this->typeMap[$type])) {
       throw new \InvalidArgumentException("Unsupported field type: {$type}. Is the field registered?");

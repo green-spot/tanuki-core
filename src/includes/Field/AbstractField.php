@@ -28,4 +28,8 @@ abstract class AbstractField implements FieldInterface {
     }
     return $this;
   }
+
+  public function normalize(mixed $value): mixed {
+    return $value;
+  }
 }

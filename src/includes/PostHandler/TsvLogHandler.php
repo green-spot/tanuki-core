@@ -26,7 +26,7 @@ class TsvLogHandler extends AbstractHandler {
     }
 
     $output = fopen($path, 'a');
-    fputcsv($output, $form->postData, "\t");
+    fputcsv($output, $form->getNormalizedData(), "\t");
     fclose($output);
 
     return $this->success();
