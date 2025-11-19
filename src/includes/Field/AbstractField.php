@@ -2,6 +2,8 @@
 
 namespace GreenSpot\Tanuki\Field;
 
+use GreenSpot\Tanuki\NormalizerRegistry;
+
 abstract class AbstractField implements FieldInterface {
   protected string $type;
   public string $name;
@@ -29,7 +31,7 @@ abstract class AbstractField implements FieldInterface {
     return $this;
   }
 
-  public function normalize(mixed $value): mixed {
+  public function normalize(mixed $value, NormalizerRegistry $registry): mixed {
     return $value;
   }
 }

@@ -2,10 +2,14 @@
 
 namespace GreenSpot\Tanuki\Field;
 
+use GreenSpot\Tanuki\NormalizerRegistry;
+
 class ValueField extends AbstractField {
   protected string $type = 'value';
+  protected string $normalizerKey = 'string';
 
-  public function normalize(mixed $value): mixed {
-    return is_string($value) ? $value : (string)$value;
+  public function normalize(mixed $value, NormalizerRegistry $registry): mixed {
+    $callable = $registry->resolve($this->normalizerKey);
+    return call_user_func($callable, $value);
   }
 }

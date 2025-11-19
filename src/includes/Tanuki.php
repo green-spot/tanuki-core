@@ -8,10 +8,12 @@ class Tanuki {
   public Factory\FieldFactory $fieldFactory;
   public FormSchemaProviderInterface $formSchemaProvider;
   public Validator $validator;
+  public NormalizerRegistry $normalizerRegistry;
 
   public function __construct(array $config=[]) {
-    $this->fieldFactory = isset($config["fieldFactory"]) ? $config["fieldFactory"] : new Factory\FieldFactory();
-    $this->validator = isset($config["validator"]) ? $config["validator"] : new Validator();
+    $this->fieldFactory = $config["fieldFactory"] ?? new Factory\FieldFactory();
+    $this->validator = $config["validator"] ?? new Validator();
+    $this->normalizerRegistry = $config["normalizerRegistry"] ?? new NormalizerRegistry();
 
     if(!isset($config["schemaDir"])) {
       throw new \InvalidArgumentException("'schemaDir' is required in config");
@@ -21,7 +23,7 @@ class Tanuki {
 
   public function createForm(string $name): Form {
     $schema = $this->formSchemaProvider->getSchema($name, $this->fieldFactory);
-    $form = new Form($name, $schema, $this->validator);
+    $form = new Form($name, $schema, $this->validator, $this->normalizerRegistry);
 
     return $form;
   }

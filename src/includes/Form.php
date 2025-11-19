@@ -8,14 +8,16 @@ class Form {
   private Validator $validator;
   private HandlerPipeline $preHandlers;
   private HandlerPipeline $postHandlers;
+  private NormalizerRegistry $normalizerRegistry;
 
   private array $postData;
   private array $validationErrors = [];
 
-  public function __construct(string $name, FormSchema $schema, Validator $validator) {
+  public function __construct(string $name, FormSchema $schema, Validator $validator, NormalizerRegistry $normalizerRegistry) {
     $this->name = $name;
     $this->schema = $schema;
     $this->validator = $validator;
+    $this->normalizerRegistry = $normalizerRegistry;
     $this->preHandlers = new HandlerPipeline("pre");
     $this->postHandlers = new HandlerPipeline("post");
   }
@@ -42,10 +44,9 @@ class Form {
     return array_map(function($field) use($postData) {
       $fieldName = $field->name;
       $fieldValue = $postData[$fieldName] ?? null;
-      return $field->normalize($fieldValue);
+      return $field->normalize($fieldValue, $this->normalizerRegistry);
     }, $this->schema->fields);
   }
-
   public function hasValidationErrors(): bool {
     return !empty($this->validationErrors);
   }

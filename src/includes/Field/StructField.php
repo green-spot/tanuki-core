@@ -2,13 +2,14 @@
 
 namespace GreenSpot\Tanuki\Field;
 
+use GreenSpot\Tanuki\NormalizerRegistry;
 use stdClass;
 
 class StructField extends AbstractField {
   protected string $type = 'struct';
   public array $fields = [];
 
-  public function normalize(mixed $value): mixed {
+  public function normalize(mixed $value, NormalizerRegistry $registry): mixed {
     if (!is_array($value)) {
       // [TODO] エラー処理
     }
