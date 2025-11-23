@@ -6,7 +6,7 @@ use GreenSpot\Tanuki\NormalizerRegistry;
 
 class ValueField extends AbstractField {
   protected string $type = 'value';
-  protected string $normalizerKey = 'string';
+  protected string $normalizerKey = 'strval';
 
   public function normalize(mixed $value, NormalizerRegistry $registry): mixed {
     $callable = $registry->resolve($this->normalizerKey);
